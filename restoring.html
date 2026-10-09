@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restoring and Non-Restoring Division</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-image: url("https://image.freepik.com/free-vector/binary-code-background-blue-vector_88211-920.jpg");
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Main container -->
+    <div class="container mx-auto my-10 p-6 bg-white rounded-lg shadow-lg max-w-xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600">Restoring and Non-Restoring Division</h1>
+        </header>
+
+        <!-- Introduction Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Introduction</h2>
+            <p class="text-gray-700">The Restoring and Non-Restoring Division algorithms are essential techniques used in computer arithmetic for dividing binary numbers. These methods are critical for efficient computation in digital systems.</p>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Division Calculator</h2>
+            <form id="divisionForm">
+                <div class="mb-4">
+                    <label for="dividend" class="block text-sm font-medium text-gray-700">Dividend:</label>
+                    <input type="number" id="dividend" placeholder="Enter the dividend" class="mt-2 p-2 border border-gray-300 rounded w-full" required>
+                </div>
+
+                <div class="mb-4">
+                    <label for="divisor" class="block text-sm font-medium text-gray-700">Divisor:</label>
+                    <input type="number" id="divisor" placeholder="Enter the divisor" class="mt-2 p-2 border border-gray-300 rounded w-full" required>
+                </div>
+
+                <button type="button" id="calculate-restoring" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition mb-2">Calculate Restoring Division</button>
+                <button type="button" id="calculate-non-restoring" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Calculate Non-Restoring Division</button>
+
+                <p id="result-restoring" class="mt-4 font-semibold text-lg text-indigo-600"></p>
+                <p id="result-non-restoring" class="mt-4 font-semibold text-lg text-indigo-600"></p>
+            </form>
+        </section>
+
+        <!-- Explanation Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Algorithm Explanation</h2>
+            <div id="explanation" class="bg-gray-100 p-4 rounded overflow-x-auto"></div>
+        </section>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        document.getElementById("calculate-restoring").addEventListener("click", () => {
+            const dividend = parseInt(document.getElementById("dividend").value);
+            const divisor = parseInt(document.getElementById("divisor").value);
+            const result = restoringDivision(dividend, divisor);
+            document.getElementById("result-restoring").innerText = `Restoring Division: Quotient = ${result.quotient}, Remainder = ${result.remainder}`;
+            displayExplanation("Restoring", dividend, divisor);
+        });
+
+        document.getElementById("calculate-non-restoring").addEventListener("click", () => {
+            const dividend = parseInt(document.getElementById("dividend").value);
+            const divisor = parseInt(document.getElementById("divisor").value);
+            const result = nonRestoringDivision(dividend, divisor);
+            document.getElementById("result-non-restoring").innerText = `Non-Restoring Division: Quotient = ${result.quotient}, Remainder = ${result.remainder}`;
+            displayExplanation("Non-Restoring", dividend, divisor);
+        });
+
+        function restoringDivision(dividend, divisor) {
+            let quotient = 0;
+            let remainder = dividend;
+            while (remainder >= divisor) {
+                remainder -= divisor;
+                quotient++;
+            }
+            return { quotient, remainder };
+        }
+
+        function nonRestoringDivision(dividend, divisor) {
+            let quotient = 0;
+            let remainder = dividend;
+            while (remainder >= divisor || remainder < 0) {
+                if (remainder >= divisor) {
+                    remainder -= divisor;
+                    quotient++;
+                } else {
+                    remainder += divisor;
+                    quotient--;
+                }
+            }
+            return { quotient, remainder };
+        }
+
+        function displayExplanation(method, dividend, divisor) {
+            let explanation = `For ${method} Division:<br>`;
+            explanation += `1. Start with Dividend: ${dividend}, Divisor: ${divisor}<br>`;
+            explanation += `2. Set initial Quotient to 0 and Remainder to Dividend.<br>`;
+            if (method === "Restoring") {
+                explanation += `3. If Remainder >= Divisor, subtract Divisor from Remainder and increase Quotient.<br>`;
+            } else {
+                explanation += `3. If Remainder >= Divisor, subtract Divisor from Remainder and increase Quotient.<br>`;
+                explanation += `4. If Remainder < Divisor, add Divisor back to Remainder and decrease Quotient.<br>`;
+            }
+            explanation += `5. Continue until Remainder < Divisor.<br>`;
+            document.getElementById("explanation").innerHTML = explanation;
+        }
+    </script>
+</body>
+</html>

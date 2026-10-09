@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booth's Multiplication Algorithm</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        body {
+            background-image:url("https://image.freepik.com/free-vector/binary-code-background-blue-vector_88211-920.jpg");
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Main container -->
+    <div class="container mx-auto my-10 p-6 bg-white rounded-lg shadow-lg max-w-xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600">Booth's Multiplication Algorithm</h1>
+        </header>
+
+        <!-- Introduction Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Introduction</h2>
+            <p class="text-gray-700">Booth's Multiplication Algorithm is an efficient way to multiply two binary or decimal numbers using a combination of additions and subtractions. It is widely used in digital systems to perform arithmetic efficiently.</p>
+        </section>
+
+        <!-- Calculator Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Booth's Calculator</h2>
+
+            <!-- Input Type Selection -->
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700">Input Type:</label>
+                <select id="inputType" class="mt-2 p-2 border border-gray-300 rounded w-full">
+                    <option value="decimal">Decimal</option>
+                    <option value="binary">Binary</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="multiplier" class="block text-sm font-medium text-gray-700">Multiplier:</label>
+                <input type="text" id="multiplier" placeholder="Enter the multiplier" class="mt-2 p-2 border border-gray-300 rounded w-full" required>
+            </div>
+            <div class="mb-4">
+                <label for="multiplicand" class="block text-sm font-medium text-gray-700">Multiplicand:</label>
+                <input type="text" id="multiplicand" placeholder="Enter the multiplicand" class="mt-2 p-2 border border-gray-300 rounded w-full" required>
+            </div>
+            <button onclick="calculateBooth()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Calculate</button>
+            <div class="mt-4">
+                <p class="text-lg font-medium">Result: <span id="result" class="text-indigo-600 font-bold">0</span></p>
+            </div>
+        </section>
+
+        <!-- Explanation Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Algorithm Explanation</h2>
+            <div id="explanation" class="bg-gray-100 p-4 rounded overflow-x-auto"></div>
+        </section>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        function calculateBooth() {
+            const inputType = document.getElementById("inputType").value;
+            let multiplier = document.getElementById("multiplier").value;
+            let multiplicand = document.getElementById("multiplicand").value;
+
+            // Convert inputs based on selected type
+            if (inputType === "binary") {
+                multiplier = parseBinary(multiplier);
+                multiplicand = parseBinary(multiplicand);
+            } else {
+                multiplier = parseFloat(multiplier); // Use parseFloat for decimal numbers
+                multiplicand = parseInt(multiplicand, 10);
+            }
+
+            const bitLength = Math.max(multiplier.toString(2).length, multiplicand.toString(2).length);
+            const result = boothsMultiplication(multiplier, multiplicand, bitLength);
+            document.getElementById("result").innerText = result.toString(2); // Output the result as binary
+        }
+
+        function parseBinary(binaryStr) {
+            // Parse binary number, handling two's complement for negative binary inputs
+            if (binaryStr[0] === '1' && binaryStr.length > 1) {
+                // Convert negative binary to signed integer
+                return parseInt(binaryStr, 2) - (1 << binaryStr.length);
+            } else {
+                // Parse positive binary
+                return parseInt(binaryStr, 2);
+            }
+        }
+
+        function boothsMultiplication(multiplier, multiplicand, bitLength) {
+            let product = 0;
+            let prevBit = 0; // Q-1 in Booth's Algorithm
+            let explanation = ""; // To hold the explanation for each step
+
+            explanation += `Initial Multiplier: ${multiplier.toString(2)}<br>`;
+            explanation += `Initial Multiplicand: ${multiplicand.toString(2)}<br><br>`;
+            explanation += "Starting Booth's Algorithm...<br>";
+
+            // Perform the algorithm for the number of bits in the multiplier
+            for (let i = 0; i < bitLength; i++) {
+                let currentBit = multiplier & 1; // Check the LSB of the multiplier
+
+                if (currentBit === 1 && prevBit === 0) {
+                    product += multiplicand; // Add multiplicand to product
+                    explanation += `Step ${i + 1}: Adding multiplicand (${multiplicand.toString(2)}) to product.<br>`;
+                } else if (currentBit === 0 && prevBit === 1) {
+                    product -= multiplicand; // Subtract multiplicand from product
+                    explanation += `Step ${i + 1}: Subtracting multiplicand (${multiplicand.toString(2)}) from product.<br>`;
+                } else {
+                    explanation += `Step ${i + 1}: No operation. Shifting only.<br>`;
+                }
+
+                // Right shift the multiplier and update prevBit
+                prevBit = currentBit;
+                multiplier >>= 1;
+                explanation += `Step ${i + 1}: Shifted multiplier, new value: ${multiplier.toString(2)}<br>`;
+
+                // Left shift the multiplicand
+                multiplicand <<= 1;
+                explanation += `Step ${i + 1}: Shifted multiplicand, new value: ${multiplicand.toString(2)}<br><br>`;
+            }
+
+            explanation += `Final product: ${product.toString(2)} (in binary).<br>`;
+            document.getElementById("explanation").innerHTML = explanation;
+            return product;
+        }
+    </script>
+</body>
+</html>

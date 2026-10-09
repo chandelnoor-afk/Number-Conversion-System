@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number System Conversions with Explanations</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            background-image: url("https://image.freepik.com/free-vector/binary-code-background-blue-vector_88211-920.jpg");
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-900">
+
+    <!-- Main container -->
+    <div class="container mx-auto my-10 p-6 bg-white rounded-lg shadow-lg max-w-xl">
+        <!-- Header -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-indigo-600">Number System Conversions</h1>
+        </header>
+
+        <!-- Conversion Sections -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Decimal to Binary</h2>
+            <div class="mb-4">
+                <label for="decimal-input" class="block text-sm font-medium text-gray-700">Enter Decimal Number:</label>
+                <input type="text" id="decimal-input" placeholder="Enter Decimal Number" class="mt-2 p-2 border border-gray-300 rounded w-full">
+            </div>
+            <button onclick="decimalToBinary()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Convert</button>
+            <div class="mt-4">
+                <p class="text-lg font-medium">Binary: <span id="binary-output" class="text-indigo-600 font-bold">0</span></p>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Binary to Decimal</h2>
+            <div class="mb-4">
+                <label for="binary-input" class="block text-sm font-medium text-gray-700">Enter Binary Number:</label>
+                <input type="text" id="binary-input" placeholder="Enter Binary Number" class="mt-2 p-2 border border-gray-300 rounded w-full">
+            </div>
+            <button onclick="binaryToDecimal()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Convert</button>
+            <div class="mt-4">
+                <p class="text-lg font-medium">Decimal: <span id="decimal-output" class="text-indigo-600 font-bold">0</span></p>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Decimal to Hexadecimal</h2>
+            <div class="mb-4">
+                <label for="decimal-input-2" class="block text-sm font-medium text-gray-700">Enter Decimal Number:</label>
+                <input type="text" id="decimal-input-2" placeholder="Enter Decimal Number" class="mt-2 p-2 border border-gray-300 rounded w-full">
+            </div>
+            <button onclick="decimalToHexadecimal()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Convert</button>
+            <div class="mt-4">
+                <p class="text-lg font-medium">Hexadecimal: <span id="hexadecimal-output" class="text-indigo-600 font-bold">0</span></p>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Hexadecimal to Decimal</h2>
+            <div class="mb-4">
+                <label for="hexadecimal-input" class="block text-sm font-medium text-gray-700">Enter Hexadecimal Number:</label>
+                <input type="text" id="hexadecimal-input" placeholder="Enter Hexadecimal Number" class="mt-2 p-2 border border-gray-300 rounded w-full">
+            </div>
+            <button onclick="hexadecimalToDecimal()" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-500 transition">Convert</button>
+            <div class="mt-4">
+                <p class="text-lg font-medium">Decimal: <span id="decimal-output-2" class="text-indigo-600 font-bold">0</span></p>
+            </div>
+        </section>
+
+        <!-- Explanation Section -->
+        <section class="mb-6">
+            <h2 class="text-xl font-semibold mb-4">Conversion Explanation</h2>
+            <div id="explanation" class="bg-gray-100 p-4 rounded overflow-x-auto"></div>
+        </section>
+    </div>
+
+    <!-- JavaScript functions with explanations -->
+    <script>
+        const PRECISION = 10;  
+
+        function decimalToBinary() {
+            let decimal = parseFloat(document.getElementById("decimal-input").value);
+            let binaryOutput = document.getElementById("binary-output");
+            let explanation = `Converting ${decimal} from Decimal to Binary:<br>`;
+
+            if (isNaN(decimal)) {
+                explanation += `Please enter a valid decimal number.`;
+                binaryOutput.innerText = "Invalid Input";
+                document.getElementById("explanation").innerHTML = explanation;
+                return;
+            }
+
+            if (decimal % 1 === 0) {  // Integer conversion
+                let binary = decimal.toString(2);
+                explanation += `Decimal is an integer, simply convert using toString(2): ${binary}<br>`;
+                binaryOutput.innerText = binary;
+            } else {
+                let integerPart = Math.floor(decimal);
+                let fractionalPart = decimal - integerPart;
+                let binaryInteger = integerPart.toString(2);
+                let binaryFraction = ".";
+
+                explanation += `Integer part: ${integerPart} -> ${binaryInteger} (binary)<br>`;
+                explanation += `Fractional part: ${fractionalPart}<br>`;
+
+                // Limit to 10 fractional binary places
+                let count = 0;
+                while (fractionalPart > 0 && count < PRECISION) {
+                    fractionalPart *= 2;
+                    if (fractionalPart >= 1) {
+                        binaryFraction += "1";
+                        fractionalPart -= 1;
+                    } else {
+                        binaryFraction += "0";
+                    }
+                    explanation += `Step ${count + 1}: Fractional part = ${fractionalPart}, binary fraction so far = ${binaryFraction}<br>`;
+                    count++;
+                }
+
+                binaryOutput.innerText = binaryInteger + binaryFraction;
+            }
+
+            document.getElementById("explanation").innerHTML = explanation;
+        }
+
+        function binaryToDecimal() {
+            let binaryInput = document.getElementById("binary-input").value;
+            let decimalOutput = document.getElementById("decimal-output");
+            let explanation = `Converting ${binaryInput} from Binary to Decimal:<br>`;
+
+            if (!/^[01.]+$/.test(binaryInput)) {
+                explanation += `Please enter a valid binary number.`;
+                decimalOutput.innerText = "Invalid Input";
+                document.getElementById("explanation").innerHTML = explanation;
+                return;
+            }
+
+            if (binaryInput.includes('.')) {
+                let [integerPart, fractionalPart] = binaryInput.split('.');
+                let decimalInteger = parseInt(integerPart, 2);
+                let decimalFraction = 0;
+
+                explanation += `Integer part: ${integerPart} -> ${decimalInteger} (decimal)<br>`;
+                explanation += `Fractional part: ${fractionalPart}<br>`;
+
+                for (let i = 0; i < fractionalPart.length; i++) {
+                    decimalFraction += parseInt(fractionalPart[i], 2) / Math.pow(2, i + 1);
+                    explanation += `Step ${i + 1}: Fractional part = ${fractionalPart[i]}, decimal fraction so far = ${decimalFraction.toFixed(10)}<br>`;
+                }
+
+                decimalOutput.innerText = (decimalInteger + decimalFraction).toFixed(PRECISION);
+            } else {
+                let decimal = parseInt(binaryInput, 2);
+                explanation += `Binary is an integer, simply convert using parseInt(2): ${decimal}<br>`;
+                decimalOutput.innerText = decimal;
+            }
+
+            document.getElementById("explanation").innerHTML = explanation;
+        }
+
+        function decimalToHexadecimal() {
+            let decimal = parseFloat(document.getElementById("decimal-input-2").value);
+            let hexadecimalOutput = document.getElementById("hexadecimal-output");
+            let explanation = `Converting ${decimal} from Decimal to Hexadecimal:<br>`;
+
+            if (isNaN(decimal)) {
+                explanation += `Please enter a valid decimal number.`;
+                hexadecimalOutput.innerText = "Invalid Input";
+                document.getElementById("explanation").innerHTML = explanation;
+                return;
+            }
+
+            if (decimal % 1 === 0) {  // Integer conversion
+                let hex = decimal.toString(16).toUpperCase();
+                explanation += `Decimal is an integer, simply convert using toString(16): ${hex}<br>`;
+                hexadecimalOutput.innerText = hex;
+            } else {
+                let integerPart = Math.floor(decimal);
+                let fractionalPart = decimal - integerPart;
+                let hexInteger = integerPart.toString(16).toUpperCase();
+                let hexFraction = ".";
+
+                explanation += `Integer part: ${integerPart} -> ${hexInteger} (hexadecimal)<br>`;
+                explanation += `Fractional part: ${fractionalPart}<br>`;
+
+                // Limit to 10 fractional hexadecimal places
+                let count = 0;
+                while (fractionalPart > 0 && count < PRECISION) {
+                    fractionalPart *= 16;
+                    let hexDigit = Math.floor(fractionalPart);
+                    hexFraction += hexDigit.toString(16).toUpperCase();
+                    fractionalPart -= hexDigit;
+                    explanation += `Step ${count + 1}: Fractional part = ${fractionalPart}, hex fraction so far = ${hexFraction}<br>`;
+                    count++;
+                }
+
+                hexadecimalOutput.innerText = hexInteger + hexFraction;
+            }
+
+            document.getElementById("explanation").innerHTML = explanation;
+        }
+
+        function hexadecimalToDecimal() {
+            let hexInput = document.getElementById("hexadecimal-input").value;
+            let decimalOutput = document.getElementById("decimal-output-2");
+            let explanation = `Converting ${hexInput} from Hexadecimal to Decimal:<br>`;
+
+            if (!/^[0-9A-Fa-f.]+$/.test(hexInput)) {
+                explanation += `Please enter a valid hexadecimal number.`;
+                decimalOutput.innerText = "Invalid Input";
+                document.getElementById("explanation").innerHTML = explanation;
+                return;
+            }
+
+            if (hexInput.includes('.')) {
+                let [integerPart, fractionalPart] = hexInput.split('.');
+                let decimalInteger = parseInt(integerPart, 16);
+                let decimalFraction = 0;
+
+                explanation += `Integer part: ${integerPart} -> ${decimalInteger} (decimal)<br>`;
+                explanation += `Fractional part: ${fractionalPart}<br>`;
+
+                for (let i = 0; i < fractionalPart.length; i++) {
+                    decimalFraction += parseInt(fractionalPart[i], 16) / Math.pow(16, i + 1);
+                    explanation += `Step ${i + 1}: Fractional part = ${fractionalPart[i]}, decimal fraction so far = ${decimalFraction.toFixed(10)}<br>`;
+                }
+
+                decimalOutput.innerText = (decimalInteger + decimalFraction).toFixed(PRECISION);
+            } else {
+                let decimal = parseInt(hexInput, 16);
+                explanation += `Hexadecimal is an integer, simply convert using parseInt(16): ${decimal}<br>`;
+                decimalOutput.innerText = decimal;
+            }
+
+            document.getElementById("explanation").innerHTML = explanation;
+        }
+    </script>
+</body>
+</html>
